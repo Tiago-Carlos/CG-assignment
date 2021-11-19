@@ -1,7 +1,7 @@
 #include <glut.h>
 #include <stdio.h>
 
-GLfloat horzangle = -45.0, vertangle = 30.0, distance = -3.0;
+GLfloat horzangle = -45.0, vertangle = 30.0, distance = -6.0;
 GLfloat escalaX = 1.0, escalaY = 1.0, escalaZ = 1.0, ordem = 1.0;
 GLfloat teste = 0;
 
@@ -34,12 +34,24 @@ void RenderScene(void) {
         glVertex3f(0.0f, 0.0f, 0.0f);
         glVertex3f(0.0f, 0.0f, 1.0f);
     glEnd();
+    
+    glColor3f(0.0f, 0.0f, 0.5f);
+    glBegin(GL_POLYGON);
+        glVertex3f(1.0f, 0.0f, 2.0f);
+        glVertex3f(1.0f, 0.0f, -1.0f);
+        glVertex3f(-1.0f, 0.0f, -1.0f);
+        glVertex3f(-1.0f, 0.0f, 2.0f);
+    glEnd();
+
+    glColor3f(1.0f, 0.0f, 0.0f);
+    glTranslatef(0.0, 0.03, 0.0);
 
     glPushMatrix();
     // Base
-    glScalef(1.0, 0.4, 1.0);
+    glScalef(1.0, 0.2, 1.0);
     glutWireCube(0.25);
     glPopMatrix();
+
     glTranslatef(0.0, 0.05, 0.0);
     glRotatef((GLfloat)arm1, 1.0, 0.0, 0.0);
     glTranslatef(0.0, 0.19, 0.0);
@@ -227,6 +239,8 @@ void MouseOptions(int button, int state, int x, int y)
     if (button == GLUT_LEFT_BUTTON) {
         if (state == GLUT_UP) {
             distance += 0.2;
+            printf("%f", distance);
+            printf("\n");
             RenderScene();
         }
     }
@@ -234,6 +248,8 @@ void MouseOptions(int button, int state, int x, int y)
     if (button == GLUT_RIGHT_BUTTON) {
         if (state == GLUT_UP) {
             distance -= 0.2;
+            printf("%f", distance);
+            printf("\n");
             RenderScene();
         }
     }
