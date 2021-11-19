@@ -3,36 +3,69 @@
 
 GLfloat horzangle = -45.0, vertangle = 30.0, distance = -3.0;
 GLfloat escalaX = 1.0, escalaY = 1.0, escalaZ = 1.0, ordem = 1.0;
+GLfloat teste = 0;
 
 void RenderScene(void) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glTranslatef(0.0f, 0.0f, distance);
+    glTranslatef(0.0f, -0.5f, distance);
     glRotatef(vertangle, 1.0f, 0.0f, 0.0f);
     glRotatef(horzangle, 0.0f, 1.0f, 0.0f);
     glScalef(escalaX, escalaY, escalaZ);
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    // Linhas X, Y e Z
-    // Vermelho = Y
-    // Verde = Z
-    // Azul = X
-    // Se consiferar glVertex(X, Y, Z)
+    // Lines X, Y e Z
+    // Red = Y
+    // Green = Z
+    // Blue = X
+    // glVertex(X, Y, Z)
     glBegin(GL_LINES);
     // GlColor3f(red, green, blue)
-    glColor3f(0.0f, 0.0f, 1.0f);
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(1.0f, 0.0f, 0.0f);
-    glColor3f(1.0f, 0.0f, 0.0f);
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(0.0f, 1.0f, 0.0f);
-    glColor3f(0.0f, 1.0f, 0.0f);
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(0.0f, 0.0f, 1.0f);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        glVertex3f(0.0f, 0.0f, 0.0f);
+        glVertex3f(1.0f, 0.0f, 0.0f);
+        glColor3f(1.0f, 0.0f, 0.0f);
+        glVertex3f(0.0f, 0.0f, 0.0f);
+        glVertex3f(0.0f, 1.0f, 0.0f);
+        glColor3f(0.0f, 1.0f, 0.0f);
+        glVertex3f(0.0f, 0.0f, 0.0f);
+        glVertex3f(0.0f, 0.0f, 1.0f);
     glEnd();
 
-    glFlush();
+    glPushMatrix();
+    // Base
+    glScalef(1.0, 0.4, 1.0);
+    glutWireCube(0.25);
+    glPopMatrix();
+
+    glTranslatef(0.0, 0.24, 0.0);
+
+    glPushMatrix();
+    // arm 1
+    glScalef(0.25, 1.5, 0.25);
+    glutWireCube(0.25);
+    glPopMatrix();
+
+    glTranslatef(0.0, 0.37, 0.0);
+
+    glPushMatrix();
+    // arm 2
+    glScalef(0.25, 1.5, 0.25);
+    glutWireCube(0.24);
+    glPopMatrix();
+
+    glTranslatef(0.0, 0.23, 0.0);
+
+    glPushMatrix();
+    // Lamp
+    glScalef(1.0, 1.0, 1.0);
+    glutWireCube(0.10);
+    glTranslatef(0.0, 0.0, 0.15);
+    glutWireCube(0.20);
+    glPopMatrix();
+
+    //glFlush();
     glutSwapBuffers();
 }
 
@@ -92,9 +125,16 @@ void F4Key(void) {
     RenderScene();
 }
 
+void F5Key(void) {
+    teste += ordem * 0.01;
+    printf("%f", teste);
+    printf("\n");
+    RenderScene();
+}
+
 
 //Tratamento do pressionar das teclas no teclado
-void KeyboardOptions(unsigned char key, int x, int y)
+void KeyboardSpecialOptions(unsigned char key, int x, int y)
 {
     switch (key) {
     case GLUT_KEY_UP:
@@ -121,6 +161,20 @@ void KeyboardOptions(unsigned char key, int x, int y)
     case GLUT_KEY_F4:
         F4Key();
         break;
+    case GLUT_KEY_F5:
+        F5Key();
+        break;
+    }
+    glutPostRedisplay();
+}
+
+void KeyboardOptions(unsigned char key, int x, int y)
+{
+    switch (key) {
+        case 27:
+            exit(0);
+        default:
+            break;
     }
     glutPostRedisplay();
 }
@@ -150,9 +204,10 @@ void main(int argc, char* argv[]) {
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGBA);
     glutInitWindowSize(500, 500);
     glutInitWindowPosition(100, 100);
-    glutCreateWindow("Casa!");
+    glutCreateWindow("Lampida!");
     glutReshapeFunc(ChangeSize);
-    glutSpecialFunc(KeyboardOptions);
+    glutSpecialFunc(KeyboardSpecialOptions);
+    glutKeyboardFunc(KeyboardOptions);
     glutMouseFunc(MouseOptions);
     glutDisplayFunc(RenderScene);
     glutMainLoop();
