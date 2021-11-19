@@ -1,0 +1,3 @@
+﻿  main.c
+C:\Users\tiago\source\repos\CG-assignment\CG-assignment\main.c(155,36): warning C4028: parâmetro formal 1 diferente da declaração
+  CG-assignment.vcxproj -> C:\Users\tiago\source\repos\CG-assignment\Debug\CG-assignment.exe
