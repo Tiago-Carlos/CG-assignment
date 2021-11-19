@@ -5,6 +5,8 @@ GLfloat horzangle = -45.0, vertangle = 30.0, distance = -3.0;
 GLfloat escalaX = 1.0, escalaY = 1.0, escalaZ = 1.0, ordem = 1.0;
 GLfloat teste = 0;
 
+static int arm1 = -30, arm2 = 60, head = 0;
+
 void RenderScene(void) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -38,8 +40,9 @@ void RenderScene(void) {
     glScalef(1.0, 0.4, 1.0);
     glutWireCube(0.25);
     glPopMatrix();
-
-    glTranslatef(0.0, 0.24, 0.0);
+    glTranslatef(0.0, 0.05, 0.0);
+    glRotatef((GLfloat)arm1, 1.0, 0.0, 0.0);
+    glTranslatef(0.0, 0.19, 0.0);
 
     glPushMatrix();
     // arm 1
@@ -47,7 +50,9 @@ void RenderScene(void) {
     glutWireCube(0.25);
     glPopMatrix();
 
-    glTranslatef(0.0, 0.37, 0.0);
+    glTranslatef(0.0, 0.19 , 0.0);
+    glRotatef((GLfloat)arm2, 1.0, 0.0, 0.0);
+    glTranslatef(0.0, 0.18, 0.0);
 
     glPushMatrix();
     // arm 2
@@ -55,7 +60,9 @@ void RenderScene(void) {
     glutWireCube(0.24);
     glPopMatrix();
 
-    glTranslatef(0.0, 0.23, 0.0);
+    glTranslatef(0.0, 0.18, 0.0);
+    glRotatef((GLfloat)head, 1.0, 0.0, 0.0);
+    glTranslatef(0.0, 0.05, 0.0);
 
     glPushMatrix();
     // Lamp
@@ -102,7 +109,7 @@ void DownKey(void) {
 }
 
 void F1Key(void) {
-    escalaX += ordem * 0.1;
+    head = 0;
     printf("F1\n");
     RenderScene();
 }
@@ -131,7 +138,6 @@ void F5Key(void) {
     printf("\n");
     RenderScene();
 }
-
 
 //Tratamento do pressionar das teclas no teclado
 void KeyboardSpecialOptions(unsigned char key, int x, int y)
@@ -171,6 +177,42 @@ void KeyboardSpecialOptions(unsigned char key, int x, int y)
 void KeyboardOptions(unsigned char key, int x, int y)
 {
     switch (key) {
+        case 'a':
+            arm2 += 5;
+            printf("%i", arm2);
+            printf("\n");
+            RenderScene();
+            break;
+        case 's':
+            arm1 += 5;
+            printf("%i", arm1);
+            printf("\n");
+            RenderScene();
+            break;
+        case 'A':
+            arm2 -= 5;
+            printf("%i", arm2);
+            printf("\n");
+            RenderScene();
+            break;
+        case 'S':
+            arm1 -= 5;
+            printf("%i", arm1);
+            printf("\n");
+            RenderScene();
+            break;
+        case 'd':
+            head += 5;
+            printf("%i", head);
+            printf("\n");
+            RenderScene();
+            break;
+        case 'D':
+            head -= 5;
+            printf("%i", head);
+            printf("\n");
+            RenderScene();
+            break;
         case 27:
             exit(0);
         default:
