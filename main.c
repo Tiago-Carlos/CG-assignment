@@ -5,7 +5,28 @@ GLfloat horzangle = -45.0, vertangle = 30.0, distance = -6.0;
 GLfloat escalaX = 1.0, escalaY = 1.0, escalaZ = 1.0, ordem = 1.0;
 GLfloat teste = 0;
 
-static int arm1 = -30, arm2 = 60, head = 0;
+static int arm1 = -30, arm2 = 60, head = 0, all = 0;
+
+void init() {
+    GLfloat light_diffuse[] = { 1, 1, 1, 1.0 };
+
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+    glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 75.0);
+
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+
+    glClearColor(0.126f, 0.126f, 0.128f, 1.0f);
+    glClearDepth(1.0f);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+
+    glEnable(GL_NORMALIZE);
+}
 
 void RenderScene(void) {
     glMatrixMode(GL_MODELVIEW);
@@ -17,39 +38,48 @@ void RenderScene(void) {
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glShadeModel(GL_FLAT);
     // Lines X, Y e Z
     // Red = Y
     // Green = Z
     // Blue = X
     // glVertex(X, Y, Z)
-    glBegin(GL_LINES);
-    // GlColor3f(red, green, blue)
-        glColor3f(0.0f, 0.0f, 1.0f);
-        glVertex3f(0.0f, 0.0f, 0.0f);
-        glVertex3f(1.0f, 0.0f, 0.0f);
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glVertex3f(0.0f, 0.0f, 0.0f);
-        glVertex3f(0.0f, 1.0f, 0.0f);
-        glColor3f(0.0f, 1.0f, 0.0f);
-        glVertex3f(0.0f, 0.0f, 0.0f);
-        glVertex3f(0.0f, 0.0f, 1.0f);
-    glEnd();
-    
+
     glColor3f(0.0f, 0.0f, 0.5f);
-    glBegin(GL_POLYGON);
-        glVertex3f(1.0f, 0.0f, 2.0f);
-        glVertex3f(1.0f, 0.0f, -1.0f);
-        glVertex3f(-1.0f, 0.0f, -1.0f);
-        glVertex3f(-1.0f, 0.0f, 2.0f);
-    glEnd();
+    glPushMatrix();
+        // esfera 1
+        glTranslatef(2.0f, 0.0f, 2.0f);
+        glutSolidSphere(0.8, 16, 16);
+    glPopMatrix();
+    
+    glPushMatrix();
+        // esfera 2
+        glTranslatef(-2.0f, 0.0f, 2.0f);
+        glutSolidSphere(0.8, 16, 16);
+    glPopMatrix();
+
+    glPushMatrix();
+        // esfera 3
+        glTranslatef(-2.0f, 0.0f, -2.0f);
+        glutSolidSphere(0.8, 16, 16);
+    glPopMatrix();
+
+    glPushMatrix();
+        // esfera 4
+        glTranslatef(2.0f, 0.0f, -2.0f);
+        glutSolidSphere(0.8, 16, 16);
+    glPopMatrix();
 
     glColor3f(1.0f, 0.0f, 0.0f);
     glTranslatef(0.0, 0.03, 0.0);
 
+    glRotatef((GLfloat)all, 0.0, 1.0, 0.0);
+
     glPushMatrix();
-    // Base
-    glScalef(1.0, 0.2, 1.0);
-    glutWireCube(0.25);
+        // Base
+        glScalef(1.0, 0.2, 1.0);
+        glutSolidCube(0.25);
     glPopMatrix();
 
     glTranslatef(0.0, 0.05, 0.0);
@@ -57,9 +87,10 @@ void RenderScene(void) {
     glTranslatef(0.0, 0.19, 0.0);
 
     glPushMatrix();
-    // arm 1
-    glScalef(0.25, 1.5, 0.25);
-    glutWireCube(0.25);
+        // arm 1
+        glColor3f(0.0f, 0.5f, 0.5f);
+        glScalef(0.25, 1.5, 0.25);
+        glutSolidCube(0.25);
     glPopMatrix();
 
     glTranslatef(0.0, 0.19 , 0.0);
@@ -67,9 +98,10 @@ void RenderScene(void) {
     glTranslatef(0.0, 0.18, 0.0);
 
     glPushMatrix();
-    // arm 2
-    glScalef(0.25, 1.5, 0.25);
-    glutWireCube(0.24);
+        // arm 2
+        glColor3f(0.5f, 0.5f, 0.0f);
+        glScalef(0.25, 1.5, 0.25);
+        glutSolidCube(0.24);
     glPopMatrix();
 
     glTranslatef(0.0, 0.18, 0.0);
@@ -78,13 +110,23 @@ void RenderScene(void) {
 
     glPushMatrix();
     // Lamp
-    glScalef(1.0, 1.0, 1.0);
-    glutWireCube(0.10);
-    glTranslatef(0.0, 0.0, 0.15);
-    glutWireCube(0.20);
+        glScalef(1.0, 1.0, 1.0);
+        glutSolidCube(0.10);
+        glTranslatef(0.0, 0.0, 0.15);
+        glutSolidCube(0.20);
     glPopMatrix();
 
-    //glFlush();
+    glTranslatef(0.0, 0.0, 0.31);
+
+    glPushMatrix();
+        glutWireSphere(0.05, 8, 8);
+        GLfloat light_position[] = { 0, 0, 0.35, 1 };
+        glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+        GLfloat light_spot[] = { 0, 0, 1 };
+        glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light_spot);
+    glPopMatrix();
+
+    glMatrixMode(GL_PROJECTION);
     glutSwapBuffers();
 }
 
@@ -95,92 +137,55 @@ void ChangeSize(GLsizei width, GLsizei height) {
     gluPerspective(30.0, width / height, 1.0, 10.0);
 }
 
-// Funcao de cada tecla
-void LeftKey(void) {
-    horzangle += 5;
-    printf("left\n");
-    RenderScene();
-}
-
-void RightKey(void) {
-    horzangle -= 5;
-    printf("right\n");
-    RenderScene();
-}
-
-void UpKey(void) {
-    vertangle += 5;
-    printf("up\n");
-    RenderScene();
-}
-
-void DownKey(void) {
-    vertangle -= 5;
-    printf("down\n");
-    RenderScene();
-}
-
-void F1Key(void) {
-    head = 0;
-    printf("F1\n");
-    RenderScene();
-}
-
-void F2Key(void) {
-    escalaY += ordem * 0.1;
-    printf("F2\n");
-    RenderScene();
-}
-
-void F3Key(void) {
-    escalaZ += ordem * 0.1;
-    printf("F3\n");
-    RenderScene();
-}
-
-void F4Key(void) {
-    ordem = -ordem;
-    printf("F4\n");
-    RenderScene();
-}
-
-void F5Key(void) {
-    teste += ordem * 0.01;
-    printf("%f", teste);
-    printf("\n");
-    RenderScene();
-}
-
 //Tratamento do pressionar das teclas no teclado
 void KeyboardSpecialOptions(unsigned char key, int x, int y)
 {
     switch (key) {
     case GLUT_KEY_UP:
-        UpKey();
+        vertangle -= 5;
+        printf("up\n");
+        RenderScene();
         break;
     case GLUT_KEY_DOWN:
-        DownKey();
+        vertangle += 5;
+        printf("down\n");
+        RenderScene();
         break;
     case GLUT_KEY_LEFT:
-        LeftKey();
+        horzangle -= 5;
+        printf("left\n");
+        RenderScene();
         break;
     case GLUT_KEY_RIGHT:
-        RightKey();
+        horzangle += 5;
+        printf("right\n");
+        RenderScene();
         break;
     case GLUT_KEY_F1:
-        F1Key();
+        head = 0;
+        printf("F1\n");
+        RenderScene();
         break;
     case GLUT_KEY_F2:
-        F2Key();
+        escalaY += ordem * 0.1;
+        printf("F2\n");
+        RenderScene();
         break;
     case GLUT_KEY_F3:
-        F3Key();
+        escalaZ += ordem * 0.1;
+        printf("F3\n");
+        RenderScene();
         break;
     case GLUT_KEY_F4:
-        F4Key();
+        ordem = -ordem;
+        printf("F4\n");
+        RenderScene();
         break;
     case GLUT_KEY_F5:
-        F5Key();
+        teste += ordem * 0.01;
+        printf("%f", teste);
+        printf("\n");
+        RenderScene();
         break;
     }
     glutPostRedisplay();
@@ -225,6 +230,18 @@ void KeyboardOptions(unsigned char key, int x, int y)
             printf("\n");
             RenderScene();
             break;
+        case 'f':
+            all += 5;
+            printf("%i", all);
+            printf("\n");
+            RenderScene();
+            break;
+        case 'F':
+            all -= 5;
+            printf("%i", all);
+            printf("\n");
+            RenderScene();
+            break;
         case 27:
             exit(0);
         default:
@@ -260,7 +277,7 @@ void MouseOptions(int button, int state, int x, int y)
 void main(int argc, char* argv[]) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGBA);
-    glutInitWindowSize(500, 500);
+    glutInitWindowSize(800, 800);
     glutInitWindowPosition(100, 100);
     glutCreateWindow("Lampida!");
     glutReshapeFunc(ChangeSize);
@@ -268,5 +285,6 @@ void main(int argc, char* argv[]) {
     glutKeyboardFunc(KeyboardOptions);
     glutMouseFunc(MouseOptions);
     glutDisplayFunc(RenderScene);
+    init();
     glutMainLoop();
 }
