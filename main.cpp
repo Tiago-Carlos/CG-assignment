@@ -6,12 +6,34 @@
 #include <cmath>
 #include <cstdio>
 
-GLfloat horzangle = -45.0, vertangle = 30.0, distance = -6.0;
+GLfloat horzangle = 0.0, vertangle = 0.0, distance = -6.0;
 GLfloat escalaX = 1.0, escalaY = 1.0, escalaZ = 1.0, ordem = 1.0;
 GLfloat teste = 0;
 
 static int arm1 = -30, arm2 = 60, head = 0, all = 0;
 
+#define	checkImageWidth 64
+#define	checkImageHeight 64
+static GLubyte checkImage[checkImageHeight][checkImageWidth][4];
+
+#ifdef GL_VERSION_1_1
+static GLuint texName;
+#endif
+
+void makeCheckImage(void)
+{
+    int i, j, c;
+
+    for (i = 0; i < checkImageHeight; i++) {
+        for (j = 0; j < checkImageWidth; j++) {
+            c = ((((i & 0x8) == 0) ^ ((j & 0x8)) == 0)) * 255;
+            checkImage[i][j][0] = (GLubyte)c;
+            checkImage[i][j][1] = (GLubyte)c;
+            checkImage[i][j][2] = (GLubyte)c;
+            checkImage[i][j][3] = (GLubyte)255;
+        }
+    }
+}
 
 class Ball {
     double radius;
@@ -67,6 +89,25 @@ void init() {
     glEnable(GL_NORMALIZE);
 
     glMaterialf(GL_FRONT, GL_SHININESS, 30);
+
+    makeCheckImage();
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+#ifdef GL_VERSION_1_1
+    glGenTextures(1, &texName);
+    glBindTexture(GL_TEXTURE_2D, texName);
+#endif
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+#ifdef GL_VERSION_1_1
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, checkImageWidth, checkImageHeight,
+        0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
+#else
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, checkImageWidth, checkImageHeight,
+        0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
+#endif
 }
 
 void RenderScene(void) {
@@ -82,6 +123,18 @@ void RenderScene(void) {
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
     glShadeModel(GL_FLAT);
 
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+#ifdef GL_VERSION_1_1
+    glBindTexture(GL_TEXTURE_2D, texName);
+#endif
+    glBegin(GL_QUADS);
+        glTexCoord2f(0.0, 0.0); glVertex3f(1.0, 0.0, 2.0);
+        glTexCoord2f(0.0, 1.0); glVertex3f(1.0, 0.0, -1.0);
+        glTexCoord2f(1.0, 1.0); glVertex3f(-1.0, 0.0, -1.0);
+        glTexCoord2f(1.0, 0.0); glVertex3f(-1.0, 0.0, 2.0);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
     //checkerboard.draw();
     // Lines X, Y e Z
     // Red = Y
@@ -91,31 +144,6 @@ void RenderScene(void) {
     for (int i = 0; i < sizeof balls / sizeof(Ball); i++) {
         balls[i].update();
     }
-
-    //glColor3f(0.0f, 0.0f, 0.5f);
-    //glPushMatrix();
-    //// esfera 1
-    //glTranslatef(2.0f, 0.0f, 2.0f);
-    //glutSolidSphere(0.8, 16, 16);
-    //glPopMatrix();
-
-    //glPushMatrix();
-    //// esfera 2
-    //glTranslatef(-2.0f, 0.0f, 2.0f);
-    //glutSolidSphere(0.8, 16, 16);
-    //glPopMatrix();
-
-    //glPushMatrix();
-    //// esfera 3
-    //glTranslatef(-2.0f, 0.0f, -2.0f);
-    //glutSolidSphere(0.8, 16, 16);
-    //glPopMatrix();
-
-    //glPushMatrix();
-    //// esfera 4
-    //glTranslatef(2.0f, 0.0f, -2.0f);
-    //glutSolidSphere(0.8, 16, 16);
-    //glPopMatrix();
 
     glColor3f(1.0f, 0.0f, 0.0f);
     glTranslatef(0.0, 0.03, 0.0);
@@ -128,9 +156,8 @@ void RenderScene(void) {
     glutSolidCube(0.25);
     glPopMatrix();
 
-    glTranslatef(0.0, 0.05, 0.0);
     glRotatef((GLfloat)arm1, 1.0, 0.0, 0.0);
-    glTranslatef(0.0, 0.19, 0.0);
+    glTranslatef(0.0, 0.16, 0.0);
 
     glPushMatrix();
     // arm 1
